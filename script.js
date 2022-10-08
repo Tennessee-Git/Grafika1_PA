@@ -24,9 +24,8 @@ let rectangleHeightInput = document.getElementById('rectHeight');
 let drawClicksButton = document.getElementById('drawButton');
 let drawParamsButton = document.getElementById('drawParamsButton');
 let clearButton = document.getElementById('clearButton');
+let stopDrawingButton = document.getElementById('stopDrawingButton');
 let drawingModeP = document.getElementById('drawingModeP');
-drawingModeP.innerText = 'Not drawing!';
-drawingModeP.style.color = "red";
 
 lineDrawing.addEventListener('click', () => {
     if(lineDrawing.checked) {
@@ -75,23 +74,23 @@ drawParamsButton.addEventListener('click', () => {
     drawWithParams();
 });
 
+stopDrawingButton.addEventListener('click', () => {
+    removeCanvasEventListeners();
+    drawingMode = '';
+    setNotDrawing();
+    resetDrawingMode();
+});
+
 clearButton.addEventListener('click', () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     removeCanvasEventListeners();
     drawingMode = '';
     shapes = [];
     radius = 20;
-    drawingModeP.innerText = 'Not drawing!';
-    drawingModeP.style.color = "red";
+    setNotDrawing();
     ctx.fillStyle = "black";
 
-    lineDrawing.checked = false;
-    rectangleDrawing.checked = false;
-    circleDrawing.checked = false;
-
-    lineDrawing.disabled = false;
-    rectangleDrawing.disabled = false;
-    circleDrawing.disabled = false;
+    resetDrawingMode();
 
     radiusInput.value = 0;
     rectangleHeightInput.value = 0;
@@ -104,28 +103,24 @@ let drawWithClicks = () => {
             ctx.fillStyle = "green";
             removeCanvasEventListeners();
             canvas.addEventListener('click', drawRectangleWithClicks);
-            drawingModeP.innerText = 'Drawing with clicks!';
-            drawingModeP.style.color = "green";
+            setDrawingWithClicks();
             break;
         case 'circle':
             ctx.fillStyle = "blue";
             removeCanvasEventListeners();
             canvas.addEventListener('click', drawCircle);
-            drawingModeP.innerText = 'Drawing with clicks!';
-            drawingModeP.style.color = "green";
+            setDrawingWithClicks();
             break;
         case 'line':
             ctx.strokeStyle = "red";
             removeCanvasEventListeners();
             canvas.addEventListener('click', drawLine);
-            drawingModeP.innerText = 'Drawing with clicks!';
-            drawingModeP.style.color = "green";
+            setDrawingWithClicks();
             break;
         default:
             drawingMode = '';
             ctx.fillStyle = "black";
-            drawingModeP.innerText = 'Not drawing!';
-            drawingModeP.style.color = "red";
+            setNotDrawing();
             removeCanvasEventListeners();
             break;
     }
@@ -140,8 +135,7 @@ let drawWithParams = () => {
                 rectangleHeight = rectangleHeightInput.value;
                 removeCanvasEventListeners();
                 canvas.addEventListener('click', drawRectangleWithParams);
-                drawingModeP.innerText = 'Drawing with parameters!';
-                drawingModeP.style.color = "green";
+                setDrawingWithParams();
             }
             else {
                 alert('Enter rectangle width and height!')
@@ -153,8 +147,7 @@ let drawWithParams = () => {
                 radius = radiusInput.value;
                 removeCanvasEventListeners();
                 canvas.addEventListener('click', drawCircle);
-                drawingModeP.innerText = 'Drawing with parameters!';
-                drawingModeP.style.color = "green";
+                setDrawingWithParams();
             }
             else {
                 alert('Enter radius value!');
@@ -164,14 +157,12 @@ let drawWithParams = () => {
             ctx.strokeStyle = "red";
             removeCanvasEventListeners();
             canvas.addEventListener('click', drawLine);
-            drawingModeP.innerText = 'Drawing with parameters!';
-            drawingModeP.style.color = "green";
+            setDrawingWithParams();
             break;
         default:
             drawingMode = '';
             ctx.fillStyle = "black";
-            drawingModeP.innerText = 'Not drawing!';
-            drawingModeP.style.color = "red";
+            setNotDrawing();
             removeCanvasEventListeners();
             break;
     }
@@ -286,7 +277,8 @@ let addToShapes = (shape) => {
                     type:'circle',
                     corners:[
                         {x:shape.corners[0].x, y:shape.corners[0].y}
-                    ]
+                    ],
+                    radius: shape.radius
                 }
             );
             break;
@@ -296,9 +288,7 @@ let addToShapes = (shape) => {
                     type:'rectangle',
                     corners:[
                         {x:shape.corners[0].x, y:shape.corners[0].y},
-                        {x:shape.corners[1].x, y:shape.corners[1].y},
-                        {x:shape.corners[2].x, y:shape.corners[2].y},
-                        {x:shape.corners[3].x, y:shape.corners[3].y}
+                        {x:shape.corners[1].x, y:shape.corners[1].y}
                     ]
                 }
             );
@@ -327,3 +317,30 @@ const removeCanvasEventListeners = () => {
     canvas.removeEventListener('click', drawRectangleWithClicks);
     canvas.removeEventListener('click', drawRectangleWithParams);
 }
+
+const resetDrawingMode = () => {
+    lineDrawing.checked = false;
+    rectangleDrawing.checked = false;
+    circleDrawing.checked = false;
+
+    lineDrawing.disabled = false;
+    rectangleDrawing.disabled = false;
+    circleDrawing.disabled = false;
+}
+
+const setNotDrawing = () => {
+    drawingModeP.innerText = 'Not drawing!';
+    drawingModeP.style.color = "red";
+}
+
+const setDrawingWithClicks = () => {
+    drawingModeP.innerText = 'Drawing with clicks!';
+    drawingModeP.style.color = "green";
+}
+
+const setDrawingWithParams = () => {
+    drawingModeP.innerText = 'Drawing with parameters!';
+    drawingModeP.style.color = "green";
+}
+
+setNotDrawing();

@@ -52,7 +52,12 @@ label {
 
 .clear {
     color: white;
-    background-color: crimson;
+    background-color: rgb(26, 25, 25);
+}
+
+.stop {
+    color: white;
+    background-color: rgb(255, 14, 14);
 }
 
 .centerDiv {
