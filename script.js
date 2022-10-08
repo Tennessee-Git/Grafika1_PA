@@ -32,6 +32,7 @@ let drawingModeP = document.getElementById('drawingModeP');
 let saveButton = document.getElementById('saveButton');
 let loadButton = document.getElementById('loadButton');
 let saveLoadP = document.getElementById('saveLoadP');
+let loadInputLabel = document.getElementById('loadInputLabel');
 
 lineDrawing.addEventListener('click', () => {
     if(lineDrawing.checked) {
@@ -127,11 +128,13 @@ saveButton.addEventListener('click', () => {
 
 loadButton.addEventListener('click', () => {
     var file = document.getElementById('load').files[0];
+    loadInputLabel.innerText = file.name;
     var reader = new FileReader();
     reader.onloadend = function() {
         shapes = JSON.parse(reader.result);
         drawShapes();
         saveLoadP.innerText = 'Loaded from file!';
+        loadInputLabel.innerText = file.name;
     };
     reader.readAsText(file);
     

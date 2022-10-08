@@ -117,8 +117,19 @@ input {
 }
 
 .loadInput {
-    content: Select file
+    opacity: 0;
+  width: 0.1px;
+  height: 0.1px;
+  position: absolute;
 }
+
+.loadInputLabel {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
 
 .load:hover {
     background-color: rgb(102, 152, 245);
