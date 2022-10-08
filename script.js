@@ -9,6 +9,9 @@ let lastClick = [0,0];
 let radius = 20;
 let rectangleWidth = 0;
 let rectangleHeight = 0;
+let startX;
+let startY;
+let dragOk = false;
 
 let drawingMode = '';
 let shapes = [];
@@ -81,6 +84,10 @@ stopDrawingButton.addEventListener('click', () => {
     drawingMode = '';
     setNotDrawing();
     resetDrawingMode();
+    console.log(shapes);
+    canvas.onmousedown = myMouseDown;
+    canvas.onmouseup = myMouseUp;
+    canvas.onmousemove = myMouseMove;
 });
 
 clearButton.addEventListener('click', () => {
@@ -97,7 +104,7 @@ clearButton.addEventListener('click', () => {
     radiusInput.value = 0;
     rectangleHeightInput.value = 0;
     rectangleWidthInput.value = 0;
-})
+});
 
 let drawWithClicks = () => {
     switch(drawingMode) {
@@ -230,13 +237,14 @@ function drawLine(e) {
             corners:[
                 {x:lastClick[0], y:lastClick[1]},
                 {x:x, y:y}
-            ]
+            ],
+            isDragging: false
         });
         clicks = 0;
     }
 
     lastClick = [x, y];
-};
+}
 
 function drawCircle(e) {
     x = getCursorPosition(e)[0] - this.offsetLeft;
@@ -247,9 +255,10 @@ function drawCircle(e) {
     addToShapes({
         type:'circle',
         origin: {x:x, y:y},
-        radius: radius
+        radius: radius,
+        isDragging: false
     });
-};
+}
 
 
 function drawRectangleWithClicks(e) {
@@ -284,7 +293,8 @@ function drawRectangleWithClicks(e) {
             type:'rectangle',
             origin: {x:posX, y:posY},
             width: width,
-            height: height
+            height: height,
+            isDragging: false
         });
 
         clicks = 0;
@@ -308,7 +318,8 @@ let addToShapes = (shape) => {
                     corners:[
                         {x:shape.corners[0].x, y:shape.corners[0].y},
                         {x:shape.corners[1].x, y:shape.corners[1].y}
-                    ]
+                    ],
+                    isDragging:false
                 }
             );
             break;
@@ -317,7 +328,8 @@ let addToShapes = (shape) => {
                 {
                     type:'circle',
                     origin: {x:shape.origin.x, y:shape.origin.y},
-                    radius: shape.radius
+                    radius: shape.radius,
+                    isDragging:false
                 }
             );
             break;
@@ -327,7 +339,8 @@ let addToShapes = (shape) => {
                     type:'rectangle',
                     origin: {x:shape.origin.x, y:shape.origin.y},
                     width: shape.width,
-                    height: shape.height
+                    height: shape.height,
+                    isDragging:false
                 }
             );
             break;
@@ -347,6 +360,84 @@ function getCursorPosition(e) {
         y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
     }
     return [x,y];
+}
+
+function myMouseDown(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    var mx = getCursorPosition(e)[0] - this.offsetLeft;
+    var my = getCursorPosition(e)[1] - this.offsetTop;
+
+    dragOk = false;
+
+    shapes.forEach((shape) => {
+        switch(shape.type) {
+            case 'line':
+                var dist1Mouse = calcDist(shape.corners[0].x,shape.corners[0].y,mx,my);
+                var dist2Mouse = calcDist(shape.corners[1].x,shape.corners[1].y,mx,my);
+                var dist12 = calcDist(shape.corners[0].x,shape.corners[0].y,shape.corners[1].x,shape.corners[1].y);
+                if(dist1Mouse + dist2Mouse == dist12) {
+                    dragOk = true;
+                    shape.isDragging = true;
+                }
+                break;
+            case 'rectangle':
+                if(mx > shape.origin.x && mx < shape.origin.x + shape.width && my > shape.origin.y && my < shape.origin.y + shape.height) {
+                    dragOk = true;
+                    shape.isDragging = true;
+                }
+                break;
+            case 'circle':
+                var distOriginMouse = calcDist(shape.origin.x,shape.origin.y,mx,my);
+                if(distOriginMouse <= shape.radius) {
+                    dragOk = true;
+                    shape.isDragging = true;
+                }
+                break;
+        }
+    });
+    startX=mx;
+    startY=my;
+}
+
+function myMouseUp(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    dragOk = false;
+    shapes.forEach((shape) => {
+        shape.isDragging = false;
+    });
+}
+
+function myMouseMove(e) {
+    if(dragOk) {
+        e.preventDefault();
+        e.stopPropagation();
+        var mx = getCursorPosition(e)[0] - this.offsetLeft;
+        var my = getCursorPosition(e)[1] - this.offsetTop;
+
+        var dx = mx - startX;
+        var dy = my - startY;
+
+        shapes.forEach((shape) => {
+            if(shape.isDragging) {
+                if(shape.type == 'line') {
+                    shape.corners[0].x += dx;
+                    shape.corners[0].y += dy;
+                    shape.corners[1].x += dx;
+                    shape.corners[1].y += dy;
+                }
+                else {
+                    shape.origin.x += dx;
+                    shape.origin.y += dy;
+                }
+            }
+        });
+        drawShapes();
+        startX=mx;
+        startY=my;
+    }
 }
 
 const removeCanvasEventListeners = () => {
@@ -379,6 +470,12 @@ const setDrawingWithClicks = () => {
 const setDrawingWithParams = () => {
     drawingModeP.innerText = 'Drawing with parameters!';
     drawingModeP.style.color = "green";
+}
+
+const calcDist = (x1,y1,x2,y2) => {
+    var xPart = Math.pow(x2 - x1,2);
+    var yPart = Math.pow(y2 - y1, 2);
+    return Math.sqrt(xPart + yPart);
 }
 
 setNotDrawing();
