@@ -31,6 +31,7 @@ let stopDrawingButton = document.getElementById('stopDrawingButton');
 let drawingModeP = document.getElementById('drawingModeP');
 let saveButton = document.getElementById('saveButton');
 let loadButton = document.getElementById('loadButton');
+let saveLoadP = document.getElementById('saveLoadP');
 
 lineDrawing.addEventListener('click', () => {
     if(lineDrawing.checked) {
@@ -104,7 +105,7 @@ clearButton.addEventListener('click', () => {
     ctx.fillStyle = "black";
 
     resetDrawingMode();
-
+    saveLoadP.innerText = 'Save/load ?';
     radiusInput.value = 0;
     rectangleHeightInput.value = 0;
     rectangleWidthInput.value = 0;
@@ -117,6 +118,7 @@ saveButton.addEventListener('click', () => {
         anchor.href = URL.createObjectURL(file);
         anchor.download = "shapes.txt";
         anchor.click();
+        saveLoadP.innerText = 'Save to file!';
     }
     else {
         alert('Add some shapes!');
@@ -124,7 +126,15 @@ saveButton.addEventListener('click', () => {
 });
 
 loadButton.addEventListener('click', () => {
-
+    var file = document.getElementById('load').files[0];
+    var reader = new FileReader();
+    reader.onloadend = function() {
+        shapes = JSON.parse(reader.result);
+        drawShapes();
+        saveLoadP.innerText = 'Loaded from file!';
+    };
+    reader.readAsText(file);
+    
 });
 
 let drawWithClicks = () => {
