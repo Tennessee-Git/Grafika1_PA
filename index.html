@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grafika komputerowa 1</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="./script.js" defer></script>
+</head>
+<body>
+    <h1 class="heading">SHAPES:</h1>
+    <div class="tools">
+        <div class="inlineElement">
+            <label for="line">Line</label>
+            <input type="checkbox" id="line">
+        </div>
+        <div class="tool">
+            <div class="inlineElement">
+                <label for="rectangle">Rectangle</label>
+                <input type="checkbox" id="rectangle">
+            </div>
+                <label for="rectWidth">Rectangle Width</label>
+                <input id="rectWidth" type="number" value="0">
+                <label for="rectHeight">Rectangle Height</label>
+                <input id="rectHeight" type="number" value="0">
+        </div>
+        <div class="tool">
+            <div class="inlineElement">
+                <label for="circle">Circle</label>
+                <input type="checkbox" id="circle">
+            </div>
+            <label for="circleRadius">Radius</label>
+            <input type="number" value="0" id="circleRadius">
+        </div>
+    </div>
+    <div class="centerDiv">
+        <p id="drawingModeP" class="drawingMode"></p>
+        <button id="drawButton" class="clicks">Draw with clicks</button>
+        <button id="drawParamsButton" class="params">Draw with parameters</button>
+        <button id="clearButton" class="clear">Clear</button>
+    </div>
+
+    <canvas id="mainCanvas" width="1000px" height="700px"></canvas>
+    
+</body>
+</html>

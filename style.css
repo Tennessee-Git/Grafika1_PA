@@ -1,0 +1,67 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+canvas {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 3px solid black;
+    margin: 10px auto;
+}
+
+label {
+    font-size:medium;
+}
+
+.tools {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
+    font-size: x-large;
+    margin-bottom: 10px;
+    vertical-align: top;
+}
+
+.tool {
+    display: flex;
+    flex-direction: column;
+}
+
+.heading {
+    text-align: center;
+    margin-bottom: 0;
+}
+
+.clicks {
+    color: white;
+    background-color: rgb(74, 72, 189);
+}
+
+.params {
+    color: white;
+    background-color: coral;
+}
+
+.drawingMode {
+    color:red;
+}
+
+.clear {
+    color: white;
+    background-color: crimson;
+}
+
+.centerDiv {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.inlineElement {
+    display: inline;
+}
