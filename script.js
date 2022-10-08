@@ -29,6 +29,8 @@ let drawParamsButton = document.getElementById('drawParamsButton');
 let clearButton = document.getElementById('clearButton');
 let stopDrawingButton = document.getElementById('stopDrawingButton');
 let drawingModeP = document.getElementById('drawingModeP');
+let saveButton = document.getElementById('saveButton');
+let loadButton = document.getElementById('loadButton');
 
 lineDrawing.addEventListener('click', () => {
     if(lineDrawing.checked) {
@@ -106,6 +108,23 @@ clearButton.addEventListener('click', () => {
     radiusInput.value = 0;
     rectangleHeightInput.value = 0;
     rectangleWidthInput.value = 0;
+});
+
+saveButton.addEventListener('click', () => {
+    if(shapes.length > 0) {
+        const file = new Blob([JSON.stringify(shapes)], {type: "text/plain"});
+        var anchor = document.createElement("a");
+        anchor.href = URL.createObjectURL(file);
+        anchor.download = "shapes.txt";
+        anchor.click();
+    }
+    else {
+        alert('Add some shapes!');
+    }
+});
+
+loadButton.addEventListener('click', () => {
+
 });
 
 let drawWithClicks = () => {
