@@ -67,10 +67,12 @@ circleDrawing.addEventListener('click', () => {
 });
 
 drawClicksButton.addEventListener('click', () => {
+    removeCanvasEventListeners();
     drawWithClicks();
 });
 
 drawParamsButton.addEventListener('click', () => {
+    removeCanvasEventListeners();
     drawWithParams();
 });
 
@@ -168,6 +170,48 @@ let drawWithParams = () => {
     }
 }
 
+function line(l) {
+    ctx.strokeStyle = "red";
+    ctx.beginPath();
+    ctx.moveTo(l.corners[0].x, l.corners[0].y);
+    ctx.lineTo(l.corners[1].x, l.corners[1].y, 6);
+    ctx.lineWidth = 5;
+    ctx.stroke();
+}
+
+function circle(c) {
+    ctx.fillStyle = "blue";
+    ctx.beginPath();
+    ctx.arc(c.origin.x,c.origin.y,c.radius, 0, 2 * Math.PI);
+    ctx.fill();
+}
+
+function rectangle(r) {
+    ctx.fillStyle = "green";
+    ctx.fillRect(r.origin.x, r.origin.y,r.width,r.height);
+}
+
+function clear() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function drawShapes() {
+    clear();
+    shapes.forEach( (shape) => {
+        switch(shape.type) {
+            case 'line':
+                line(shape);
+                break;
+            case 'rectangle':
+                rectangle(shape);
+                break;
+            case 'circle':
+                circle(shape);
+                break;
+        }
+    })
+}
+
 function drawLine(e) {
     x = getCursorPosition(e)[0] - this.offsetLeft;
     y = getCursorPosition(e)[1] - this.offsetTop;
@@ -202,9 +246,7 @@ function drawCircle(e) {
     ctx.fill();
     addToShapes({
         type:'circle',
-        corners:[
-            {x:x, y:y}
-        ],
+        origin: {x:x, y:y},
         radius: radius
     });
 };
@@ -240,10 +282,9 @@ function drawRectangleWithClicks(e) {
 
         addToShapes({
             type:'rectangle',
-            corners:[
-                {x:posX, y:posY},
-                {x:posX + width, y:posY + height}
-            ]
+            origin: {x:posX, y:posY},
+            width: width,
+            height: height
         });
 
         clicks = 0;
@@ -275,9 +316,7 @@ let addToShapes = (shape) => {
             shapes.push(
                 {
                     type:'circle',
-                    corners:[
-                        {x:shape.corners[0].x, y:shape.corners[0].y}
-                    ],
+                    origin: {x:shape.origin.x, y:shape.origin.y},
                     radius: shape.radius
                 }
             );
@@ -286,10 +325,9 @@ let addToShapes = (shape) => {
             shapes.push(
                 {
                     type:'rectangle',
-                    corners:[
-                        {x:shape.corners[0].x, y:shape.corners[0].y},
-                        {x:shape.corners[1].x, y:shape.corners[1].y}
-                    ]
+                    origin: {x:shape.origin.x, y:shape.origin.y},
+                    width: shape.width,
+                    height: shape.height
                 }
             );
             break;
