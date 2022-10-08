@@ -71,11 +71,13 @@ circleDrawing.addEventListener('click', () => {
 
 drawClicksButton.addEventListener('click', () => {
     removeCanvasEventListeners();
+    dragOk = false;
     drawWithClicks();
 });
 
 drawParamsButton.addEventListener('click', () => {
     removeCanvasEventListeners();
+    dragOk = false;
     drawWithParams();
 });
 
@@ -140,8 +142,8 @@ let drawWithParams = () => {
         case 'rectangle':
             if(rectangleWidthInput.value != 0 && rectangleHeightInput.value != 0) {
                 ctx.fillStyle = "green";
-                rectangleWidth = rectangleWidthInput.value;
-                rectangleHeight = rectangleHeightInput.value;
+                rectangleWidth = Number(rectangleWidthInput.value);
+                rectangleHeight = Number(rectangleHeightInput.value);
                 removeCanvasEventListeners();
                 canvas.addEventListener('click', drawRectangleWithParams);
                 setDrawingWithParams();
@@ -307,6 +309,13 @@ function drawRectangleWithParams(e) {
     x = getCursorPosition(e)[0] - this.offsetLeft;
     y = getCursorPosition(e)[1] - this.offsetTop;
     ctx.fillRect(x,y,rectangleWidth,rectangleHeight);
+    addToShapes({
+        type:'rectangle',
+        origin: {x:x, y:y},
+        width: rectangleWidth,
+        height: rectangleHeight,
+        isDragging: false
+    });
 }
 
 let addToShapes = (shape) => {
@@ -374,10 +383,11 @@ function myMouseDown(e) {
     shapes.forEach((shape) => {
         switch(shape.type) {
             case 'line':
-                var dist1Mouse = calcDist(shape.corners[0].x,shape.corners[0].y,mx,my);
-                var dist2Mouse = calcDist(shape.corners[1].x,shape.corners[1].y,mx,my);
-                var dist12 = calcDist(shape.corners[0].x,shape.corners[0].y,shape.corners[1].x,shape.corners[1].y);
-                if(dist1Mouse + dist2Mouse == dist12) {
+                if(mx > shape.corners[0].x - 5 && mx < shape.corners[0].x + 10 && my > shape.corners[0].y - 5  && my < shape.corners[0].y + 10) {
+                    dragOk = true;
+                    shape.isDragging = true;
+                }
+                if(mx > shape.corners[1].x - 5 && mx < shape.corners[1].x + 10 && my > shape.corners[1].y - 5  && my < shape.corners[1].y + 10) {
                     dragOk = true;
                     shape.isDragging = true;
                 }
@@ -445,6 +455,9 @@ const removeCanvasEventListeners = () => {
     canvas.removeEventListener('click', drawCircle);
     canvas.removeEventListener('click', drawRectangleWithClicks);
     canvas.removeEventListener('click', drawRectangleWithParams);
+    canvas.removeEventListener('mousedown', myMouseDown);
+    canvas.removeEventListener('mouseup', myMouseUp);
+    canvas.removeEventListener('mousemove', myMouseMove);
 }
 
 const resetDrawingMode = () => {
